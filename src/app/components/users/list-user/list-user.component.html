@@ -1,0 +1,47 @@
+<div class="content-wrapper">
+  <section class="content-header">
+    <h1>Users</h1>
+    <ol class="breadcrumb">
+      <li class="active"><i class="fa fa-user"></i> Users</li>
+    </ol>
+  </section>
+  <section class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box box-primary">
+          <div class="box-body">
+              <ag-grid-angular
+              #agGrid
+              style="width: 100%;"
+              domLayout='autoHeight'
+              class="ag-theme-balham"
+              (gridReady)="onGridReady($event)"
+              [gridOptions]="gridOptions"
+              [columnDefs]="columnDefs">
+            </ag-grid-angular>
+          </div>
+          <div class="box box-footer">
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<ng-template #actionsCell let-row>
+  <ng-container *ngIf="row">
+      <a class="btn btn-primary btn-xs text-white" [routerLink]="['/admin/users', row.id]"> <i class="fa fa-edit"></i></a>&nbsp;
+      <a class="btn btn-danger btn-xs text-white" [routerLink]="['/admin/users', row.id]"> <i class="fa fa-trash"></i></a>
+  </ng-container>
+</ng-template>
+
+<ng-template #statusCell let-row>
+  <ng-container *ngIf="row" [ngSwitch]="row.status">
+    <span *ngSwitchCase="'active'" class="label label-success">{{ row.status | titlecase }}</span>
+    <span *ngSwitchCase="'unverified'" class="label label-warning">{{ row.status | titlecase }}</span>
+    <span *ngSwitchCase="'locked'" class="label label-danger">{{ row.status | titlecase }}</span>
+    <span *ngSwitchCase="'banned'" class="label label-danger">{{ row.status | titlecase }}</span>
+    <span *ngSwitchDefault class="label label-default">None</span>
+  </ng-container>
+</ng-template>

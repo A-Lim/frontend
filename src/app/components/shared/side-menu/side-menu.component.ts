@@ -8,23 +8,11 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./side-menu.component.scss']
 })
 export class SideMenuComponent implements OnInit, OnDestroy {
-  private authListenerSubscriber: Subscription;
-  public isAuthenticated = false;
-
-  constructor(private authService: AuthService) {
-  }
 
   ngOnInit() {
-    this.isAuthenticated = this.authService.checkIsAuthenticated();
-    this.authListenerSubscriber = this.authService
-      .getAuthStatusListener()
-      .subscribe(isAuthenticated => {
-        this.isAuthenticated = isAuthenticated;
-      });
   }
 
   ngOnDestroy() {
-    this.authListenerSubscriber.unsubscribe();
   }
 
 }

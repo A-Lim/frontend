@@ -1,0 +1,91 @@
+<div class="content-wrapper">
+    <section class="content-header">
+      <h1>Edit User</h1>
+      <ol class="breadcrumb">
+        <li><a href="/admin/users"><i class="fa fa-user"></i> Users</a></li>
+        <li class="active"> Edit User</li>
+      </ol>
+    </section>
+    <section class="content">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="box box-primary">
+              <div class="box-body box-profile">
+                <img class="profile-user-img img-responsive img-circle" src="" alt="User profile picture">
+
+                <h3 *ngIf="user" class="profile-username text-center">{{ user.fullName }}</h3>
+
+                <p *ngIf="user" class="text-muted text-center">
+
+                  {{ user.email }}
+                </p>
+
+
+                <ul class="list-group list-group-unbordered">
+                  <li *ngIf="user" class="list-group-item">
+                    <b>Status</b>
+                    <a class="pull-right">
+                        <span class="label ml-2"
+                        [class.label-success]="user.status === 'active'"
+                        [class.label-warning]="user.status === 'unverified'"
+                        [class.label-danger]="user.status === 'locked'"
+                        [class.label-danger]="user.status === 'banned'">{{ user.status }}</span>
+                    </a>
+                  </li>
+                  <!-- <li *ngIf="user" class="list-group-item">
+                    <b>Email</b> <a class="pull-right">{{ user.email }}</a>
+                  </li> -->
+                  <!-- <li class="list-group-item">
+                    <b>Friends</b> <a class="pull-right">13,287</a>
+                  </li> -->
+                </ul>
+              </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <form method="post" [formGroup]="userForm" (ngSubmit)="onSubmit()">
+              <div class="box box-primary">
+                <div class="box-body">
+                    <app-alert></app-alert>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group has-feedback" [ngClass]="{ 'has-error': submitted && f['firstName'].errors }">
+                          <label>First Name</label>
+                          <input type="text" class="form-control" placeholder="First Name" formControlName="firstName" />
+                          <div *ngIf="submitted && f['firstName'].errors">
+                            <span *ngIf="f['firstName'].errors.required" class="text-danger" role="alert">First name is required.</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group has-feedback" [ngClass]="{ 'has-error': submitted && f['lastName'].errors }">
+                          <label>Last Name</label>
+                          <input type="text" class="form-control" placeholder="Last Name" formControlName="lastName" />
+                          <div *ngIf="submitted && f['lastName'].errors">
+                            <span *ngIf="f['lastName'].errors.required" class="text-danger" role="alert">Last name is required.</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-md-12">
+                        <div class="form-group has-feedback" [ngClass]="{ 'has-error': submitted && f['email'].errors }">
+                          <label>Email</label>
+                          <input type="email" class="form-control" placeholder="Email" formControlName="email" />
+                          <div *ngIf="submitted && f['email'].errors">
+                            <span *ngIf="f['email'].errors.required" class="text-danger" role="alert">Email is required.</span>
+                            <span *ngIf="f['email'].errors.email" class="text-danger" role="alert">Email format invalid.</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="box box-footer">
+                  <button type="submit" class="btn btn-primary pull-right"><i *ngIf="isLoading" class="fa fa-spinner fa-spin"></i> Update Profile</button>
+                </div>
+              </div>
+            </form>
+        </div>
+      </div>
+    </section>
+  </div>

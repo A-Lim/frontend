@@ -1,4 +1,13 @@
-<app-nav *ngIf="isAuthenticated"></app-nav>
-<app-side-menu *ngIf="isAuthenticated"></app-side-menu>
+<app-nav *ngIf="isAuthenticated &&
+  router.url !== '/login' &&
+  router.url !== '/register' &&
+  router.url !== '/password/reset'"></app-nav>
+<app-side-menu *ngIf="isAuthenticated &&
+  router.url !== '/login' &&
+  router.url !== '/register' &&
+  router.url !== '/password/reset'"></app-side-menu>
 <router-outlet></router-outlet>
-<app-footer *ngIf="isAuthenticated"></app-footer>
+<app-footer *ngIf="isAuthenticated &&
+  router.url !== '/login' &&
+  router.url !== '/register' &&
+  router.url !== '/password/reset'"></app-footer>

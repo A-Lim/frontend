@@ -1,44 +1,55 @@
 <div class="login-box">
-    <div class="login-logo">
-        GLOBAL<b> FS</b>
-    </div>
-    <div class="login-box-body">
-        <p class="text-center">Please enter your credentials.</p>
-        <!-- <div class="alert alert-danger" role="alert" *ngIf="errors.length > 0">
-          <ul class="no-bullets">
-            <li *ngFor="let error of errors">{{error}}</li>
-          </ul>
-        </div> -->
-        <app-alert></app-alert>
-        <form method="post" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group has-feedback" [ngClass]="{ 'has-error': submitted && f.email.errors }">
-                        <input type="email" class="form-control" placeholder="Email" formControlName="email" value="">
-                        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
-                        <div *ngIf="submitted && f.email.errors">
-                            <span *ngIf="submitted && f.email.errors.required" class="text-danger" role="alert">Email is required.</span>
-                            <span *ngIf="submitted && f.email.errors.email " class="text-danger" role="alert">Email format invalid.</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-12">
-                    <div class="form-group has-feedback" [ngClass]="{ 'has-error': submitted && f.password.errors }">
-                        <input type="password" class="form-control" placeholder="Password" formControlName="password" >
-                        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-                        <div *ngIf="submitted && f.password.errors">
-                            <span *ngIf="submitted && f.password.errors.required" class="text-danger" role="alert">Password is required.</span>
-                            <span *ngIf="submitted && f.password.errors.minlength " class="text-danger" role="alert">Password must be at least 6 characters.</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-12 form-group">
-                    <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
-                </div>
+  <div class="login-logo">
+    GLOBAL<b> FS</b>
+  </div>
+  <div class="login-box-body">
+    <p class="text-center">Please enter your credentials.</p>
+    <app-alert></app-alert>
+    <form method="post" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group has-feedback" [ngClass]="{ 'has-error': submitted && f['email'].errors }">
+            <input type="email" class="form-control" placeholder="Email" formControlName="email" value="">
+            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+            <div *ngIf="submitted && f['email'].errors">
+              <span *ngIf="f['email'].errors.required" class="text-danger" role="alert">Email is
+                required.</span>
+              <span *ngIf="f['email'].errors.email " class="text-danger" role="alert">Email format
+                invalid.</span>
             </div>
-        </form>
-        <a href="/password/reset" class="mt-2">I forgot my password</a><br>
+          </div>
+        </div>
+
+        <div class="col-md-12">
+          <div class="form-group has-feedback" [ngClass]="{ 'has-error': submitted && f['password'].errors }">
+            <input type="password" class="form-control" placeholder="Password" formControlName="password">
+            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            <div *ngIf="submitted && f['password'].errors">
+              <span *ngIf="f['password'].errors.required" class="text-danger" role="alert">Password is
+                required.</span>
+              <span *ngIf="f['password'].errors.minlength " class="text-danger" role="alert">Password must be
+                at least 6 characters.</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-8">
+          <div class="checkbox icheck">
+            <label>
+              <input type="checkbox" [disabled]="isLoading"> Remember Me
+            </label>
+          </div>
+        </div>
+        <div class="col-xs-4">
+          <button type="submit" [disabled]="isLoading" class="btn btn-primary btn-block btn-flat"><i *ngIf="isLoading" class="fa fa-spinner fa-spin"></i> Sign In</button>
+        </div>
+      </div>
+    </form>
+    <div class="social-auth-links text-center">
+      <p>- OR -</p>
+      <a href="#" class="btn btn-block btn-social btn-facebook btn-flat"><i class="fa fa-facebook"></i> Sign in using
+        Facebook</a>
     </div>
+    <a href="/register" class="mt-2">Register for a new membership</a><br>
+    <a href="/password/reset" class="mt-2">I forgot my password</a>
+  </div>
 </div>

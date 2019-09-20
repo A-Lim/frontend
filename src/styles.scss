@@ -19,3 +19,8 @@ ul.no-bullets {
   list-style: none;
   padding-left: 0;
 }
+
+.text-white { color: #fff; }
+
+@import "~ag-grid-community/dist/styles/ag-grid.css";
+@import "~ag-grid-community/dist/styles/ag-theme-balham.css";

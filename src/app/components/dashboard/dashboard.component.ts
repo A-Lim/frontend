@@ -10,18 +10,18 @@ import { AuthService } from '../../../services/auth.service';
 export class DashboardComponent implements OnInit, OnDestroy {
   private authStatusSubscription: Subscription;
   public isAuthenticated = false;
-  public userId: string;
+  public user: object;
 
   constructor(private authService: AuthService) {
   }
 
   ngOnInit() {
     this.isAuthenticated = this.authService.checkIsAuthenticated();
-    this.userId = this.authService.getUserId();
+    this.user = this.authService.getUserData();
     this.authStatusSubscription = this.authService.getAuthStatusListener()
-      .subscribe(isAuthenticated => {
-        this.isAuthenticated = isAuthenticated;
-        this.userId = this.authService.getUserId();
+      .subscribe(data => {
+        this.isAuthenticated = data.isAuthenticated;
+        this.user = data.user;
       });
   }
 

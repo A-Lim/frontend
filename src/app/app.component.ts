@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { Subscription } from 'rxjs';
+
 
 @Component({
   selector: 'app-root',
@@ -11,20 +13,20 @@ import { Subscription } from 'rxjs';
 export class AppComponent implements OnInit, OnDestroy {
   public title = 'globalfamilysurvey';
   public isAuthenticated = false;
-  public userId: string;
+  public user: object;
   private authListenerSubscriber: Subscription;
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, public router: Router) {
+  }
 
   ngOnInit() {
     this.authService.autoAuthUser();
     this.isAuthenticated = this.authService.checkIsAuthenticated();
-    this.userId = this.authService.getUserId();
     this.authListenerSubscriber = this.authService
       .getAuthStatusListener()
-      .subscribe(isAuthenticated => {
-        this.isAuthenticated = isAuthenticated;
-        this.userId = this.authService.getUserId();
+      .subscribe(data => {
+        this.isAuthenticated = data.isAuthenticated;
+        this.user = data.user;
       });
   }
 

@@ -1,0 +1,49 @@
+<div class="login-box">
+  <div class="login-logo">GLOBAL<b> FS</b></div>
+  <div class="login-box-body">
+    <p class="text-center">Register</p>
+    <app-alert></app-alert>
+    <form method="post" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group has-feedback" [ngClass]="{ 'has-error': submitted && f['email'].errors }">
+            <input type="email" class="form-control" placeholder="Email" formControlName="email" value="" />
+            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+            <div *ngIf="submitted && f['email'].errors">
+              <span *ngIf="f['email'].errors.required" class="text-danger" role="alert">Email is required.</span>
+              <span *ngIf="f['email'].errors.email" class="text-danger" role="alert">Email format invalid.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12">
+          <div class="form-group has-feedback" [ngClass]="{ 'has-error': submitted && f['password'].errors }">
+            <input type="password" class="form-control" placeholder="Password" formControlName="password" />
+            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            <div *ngIf="submitted && f['password'].errors">
+              <span *ngIf="f['password'].errors.required" class="text-danger" role="alert">Password is required.</span>
+              <span *ngIf="f['password'].errors.minlength" class="text-danger" role="alert">Password must be at least 6 characters.</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12">
+            <div class="form-group has-feedback" [ngClass]="{ 'has-error': submitted && f['confirmPassword'].errors }">
+              <input type="password" class="form-control" placeholder="Confirm Password" formControlName="confirmPassword" />
+              <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+              <div *ngIf="submitted && f['confirmPassword'].errors">
+                <span *ngIf="f['confirmPassword'].errors.matchValue" class="text-danger" role="alert">Confirm password does not match.</span>
+              </div>
+            </div>
+          </div>
+        <div class="col-md-12">
+            <button type="submit" [disabled]="isLoading" class="btn btn-primary btn-block btn-flat"><i *ngIf="isLoading" class="fa fa-spinner fa-spin"></i> Register</button>
+        </div>
+      </div>
+    </form>
+    <div class="social-auth-links text-center">
+      <p>- OR -</p>
+      <a href="#" class="btn btn-block btn-social btn-facebook btn-flat"><i class="fa fa-facebook"></i> Sign in using Facebook</a>
+    </div>
+    <a href="/login" class="mt-2">Back to login</a><br />
+  </div>
+</div>
