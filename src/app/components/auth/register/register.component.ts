@@ -3,9 +3,9 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractContro
 import { Title, Meta } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 
-import { AuthService } from '../../../../services/auth.service';
-import { App } from '../../../../config';
-import ValidationUtil from '../../../../helpers/validation.util.js';
+import { AuthService } from 'services/auth.service';
+import { App } from 'config';
+import ValidationUtil from 'helpers/validation.util.js';
 
 @Component({
   selector: 'app-register',
@@ -44,20 +44,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.authStatusSubscription = this.authService.getAuthStatusListener()
       .subscribe(_ => {
         this.isLoading = false;
-        this.enableFormControls();
+        this.registerForm.enable();
       });
-  }
-
-  disableFormControls() {
-    this.f.email.disable();
-    this.f.password.disable();
-    this.f.confirmPassword.disable();
-  }
-
-  enableFormControls() {
-    this.f.email.enable();
-    this.f.password.enable();
-    this.f.confirmPassword.enable();
   }
 
   onSubmit() {
@@ -71,7 +59,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     const cpassword = this.registerForm.value.confirmPassword;
 
     this.isLoading = true;
-    this.disableFormControls();
+    this.registerForm.disable();
     this.authService.register(email, password, cpassword);
   }
 

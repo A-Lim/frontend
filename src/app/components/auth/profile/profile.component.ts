@@ -3,10 +3,10 @@ import { Title, Meta } from '@angular/platform-browser';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
-import { User } from '../../../../models/user.model';
-import { App } from '../../../../config';
-import { AuthService } from '../../../../services/auth.service';
-import ValidationUtil from '../../../../helpers/validation.util.js';
+import { User } from 'models/user.model';
+import { App } from 'config';
+import { AuthService } from 'services/auth.service';
+import ValidationUtil from 'helpers/validation.util.js';
 
 @Component({
   selector: 'app-profile',
@@ -41,14 +41,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.titleService.setTitle(`${App.NAME} | Profile`);
     // this.user = this.authService.getUserData();
     // disable form fields until data is loaded
-    this.disableFormControls();
+    this.profileForm.disable();
 
     this.authService.getProfile();
     this.authStatusSubscription = this.authService.getAuthStatusListener()
       .subscribe(data => {
         this.user = data.user;
         this.isLoading = false;
-        this.enableFormControls();
+        this.profileForm.enable();
         this.populateForm();
       });
   }
@@ -71,7 +71,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     data.userId = this.user.id;
 
     this.isLoading = true;
-    this.disableFormControls();
+    this.profileForm.disable();
     this.authService.updateProfile(data);
   }
 
@@ -84,24 +84,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
       newPassword: '',
       confirmPassword: ''
     });
-  }
-
-  disableFormControls() {
-    this.f.firstName.disable();
-    this.f.lastName.disable();
-    this.f.email.disable();
-    this.f.oldPassword.disable();
-    this.f.newPassword.disable();
-    this.f.confirmPassword.disable();
-  }
-
-  enableFormControls() {
-    this.f.firstName.enable();
-    this.f.lastName.enable();
-    this.f.email.enable();
-    this.f.oldPassword.enable();
-    this.f.newPassword.enable();
-    this.f.confirmPassword.enable();
   }
 
   ngOnDestroy() {

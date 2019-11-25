@@ -35,7 +35,7 @@
         <div class="col-xs-8">
           <div class="checkbox icheck">
             <label>
-              <input type="checkbox" [disabled]="isLoading"> Remember Me
+              <input type="checkbox" appICheck [disabled]="isLoading"> Remember Me
             </label>
           </div>
         </div>
@@ -49,7 +49,7 @@
       <a href="#" class="btn btn-block btn-social btn-facebook btn-flat"><i class="fa fa-facebook"></i> Sign in using
         Facebook</a>
     </div>
-    <a href="/register" class="mt-2">Register for a new membership</a><br>
-    <a href="/password/reset" class="mt-2">I forgot my password</a>
+    <a [routerLink]="['/register']" class="mt-2">Register for a new membership</a><br>
+    <a [routerLink]="['/password/reset']" class="mt-2">I forgot my password</a>
   </div>
 </div>

@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AgGridAngular } from 'ag-grid-angular';
-import { UserService } from '../../../../services/user.service';
+import { UserService } from 'services/user.service';
 import { IDatasource, IGetRowsParams, GridOptions, GridApi } from 'ag-grid-community';
 // import { ActionCellRendererComponent } from '../../cells/action-cell-renderer/action-cell-renderer.component';
-import { TemplateRendererComponent } from '../../../../helpers/template-renderer.component';
+import { TemplateRendererComponent } from 'helpers/template-renderer.component';
 
 @Component({
   selector: 'app-list-user',
@@ -20,7 +20,6 @@ export class ListUserComponent implements OnInit {
   public columnDefs: any[];
   public rowData: any;
 
-  // public gridApi: GridApi;
   public gridOptions: GridOptions = {
     defaultColDef: {
       sortable: true
@@ -118,7 +117,6 @@ export class ListUserComponent implements OnInit {
   }
 
   onGridReady(params) {
-    // this.gridApi = params.api;
     params.api.sizeColumnsToFit();
     params.api.setDatasource(this.dataSource);
   }

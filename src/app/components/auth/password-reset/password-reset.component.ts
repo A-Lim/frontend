@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Renderer2 } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
-import { App } from '../../../../config'
+import { App } from 'config';
 
 @Component({
   selector: 'app-password-reset',

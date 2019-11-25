@@ -1,6 +1,7 @@
 import { FormGroup, Validators } from '@angular/forms';
 
 export default class ValidationUtil {
+  // check if first field matches the second field
   static matchValue(firstControlName: string, secondControlName: string): any {
     return (formGroup: FormGroup) => {
       const firstControl = formGroup.controls[firstControlName];
@@ -23,6 +24,7 @@ export default class ValidationUtil {
     };
   }
 
+  // validate second field as required if firstfield is not null
   static requiredIf(firstControlName: string, secondControlName: string): any {
     return (formGroup: FormGroup) => {
       const firstControl = formGroup.controls[firstControlName];

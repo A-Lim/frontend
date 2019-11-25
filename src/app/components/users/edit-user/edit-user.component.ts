@@ -3,9 +3,9 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
-import { User } from 'src/models/user.model';
-import { App } from 'src/config';
-import { UserService } from 'src/services/user.service';
+import { User } from 'models/user.model';
+import { App } from 'config';
+import { UserService } from 'services/user.service';
 
 @Component({
   selector: 'app-edit-user',
@@ -33,7 +33,7 @@ export class EditUserComponent implements OnInit {
   ngOnInit() {
     this.titleService.setTitle(`${App.NAME} | User`);
     // disable form fields until data is loaded
-    this.disableFormControls();
+    this.userForm.disable();
 
     // get id from route
     this.route.paramMap.subscribe(params => {
@@ -44,7 +44,7 @@ export class EditUserComponent implements OnInit {
       this.userService.getUser(this.userId)
         .subscribe(user => {
           this.user = user;
-          this.enableFormControls();
+          this.userForm.enable();
           this.populateForm();
         },
         error => {
@@ -77,17 +77,5 @@ export class EditUserComponent implements OnInit {
       lastName: this.user.lastName,
       email: this.user.email
     });
-  }
-
-  disableFormControls() {
-    this.f.firstName.disable();
-    this.f.lastName.disable();
-    this.f.email.disable();
-  }
-
-  enableFormControls() {
-    this.f.firstName.enable();
-    this.f.lastName.enable();
-    this.f.email.enable();
   }
 }

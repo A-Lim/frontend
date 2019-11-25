@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { AuthData } from './../models/auth-data.model';
-import { User } from './../models/user.model';
+import { AuthData } from 'models/auth-data.model';
+import { User } from 'models/user.model';
 import { Subject, Observable } from 'rxjs';
 
-import { AlertService } from './alert.service';
-import { API_BASE_URL, API_VERSION } from './../config';
+import { BaseService } from 'services/base.service';
+import { AlertService } from 'services/alert.service';
+import { API_BASE_URL, API_VERSION } from 'config';
 
 @Injectable({ providedIn: 'root' })
-export class AuthService {
+export class AuthService extends BaseService {
   private url = `${API_BASE_URL}/api/${API_VERSION}/auth`;
   private user: User;
   private token;
@@ -17,7 +18,9 @@ export class AuthService {
   private isAuthenticated = false;
   private authStatusListener = new Subject<{isAuthenticated: boolean, user: User}>();
 
-  constructor(private http: HttpClient, private router: Router, private alertService: AlertService) { }
+  constructor(private http: HttpClient, private router: Router, alertService: AlertService) {
+    super(alertService);
+  }
 
   getToken(): string {
     return this.token;
@@ -55,8 +58,9 @@ export class AuthService {
         this.router.navigate(['admin/dashboard']);
       }
     }, error => {
+      console.log(error);
       this.authStatusListener.next({ isAuthenticated: false, user: null });
-      this.alertService.error(error.error.message);
+      this.alertError(error);
     });
   }
 
@@ -64,7 +68,7 @@ export class AuthService {
     const data = { email, password, confirmPassword };
     this.http.post<{message: string, token: string, expiresIn: number, user: User, logsUserIn: boolean}>(`${this.url}/register` , data)
       .subscribe(response => {
-        this.alertService.success(response.message);
+        this.alertSuccess(response.message);
 
         if (response.logsUserIn && response.token && response.expiresIn) {
           this.token = response.token;
@@ -82,7 +86,7 @@ export class AuthService {
         }
       }, error => {
         this.authStatusListener.next({ isAuthenticated: false, user: null });
-        this.alertService.error(error.error.message);
+        this.alertError(error);
       });
   }
 
@@ -92,7 +96,7 @@ export class AuthService {
         this.authStatusListener.next({ isAuthenticated: this.isAuthenticated, user: this.user });
       }, error => {
         this.authStatusListener.next({ isAuthenticated: false, user: null });
-        this.alertService.error(error.error.message);
+        this.alertError(error);
       });
   }
 
@@ -100,13 +104,13 @@ export class AuthService {
     this.http.patch<{message: string, user: User}>(`${this.url}/profile` , data)
       .subscribe(response => {
         this.user = response.user;
-        this.alertService.success(response.message);
+        this.alertSuccess(response.message);
         // update local storage data
         localStorage.setItem('user', JSON.stringify(this.user));
         this.authStatusListener.next({ isAuthenticated: true, user: this.user });
       }, error => {
         this.authStatusListener.next({ isAuthenticated: false, user: null });
-        this.alertService.error(error.error.message);
+        this.alertError(error);
       });
   }
 
@@ -142,6 +146,7 @@ export class AuthService {
     this.clearAuthData();
     this.user = null;
     this.router.navigate(['login']);
+    this.alertSuccess('Successfully logged out');
   }
 
   private setAuthTimer(duration: number): void {

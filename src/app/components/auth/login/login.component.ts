@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title, Meta } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 
-import { AuthService } from '../../../../services/auth.service';
-import { App } from '../../../../config';
+import { AuthService } from 'services/auth.service';
+import { App } from 'config';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +15,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   private authStatusSubscription: Subscription;
   public loginForm: FormGroup;
   public submitted = false;
-  public errors: string[];
   public isLoading = false;
 
   // convenience getter for easy access to form fields
@@ -39,8 +38,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.authStatusSubscription = this.authService.getAuthStatusListener()
       .subscribe(_ => {
         this.isLoading = false;
-        this.enableFormControls();
-
+        this.loginForm.enable();
       });
   }
 
@@ -51,19 +49,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     this.isLoading = true;
-    this.disableFormControls();
+    this.loginForm.disable();
 
     this.authService.login(this.loginForm.value.email, this.loginForm.value.password);
-  }
-
-  disableFormControls() {
-    this.f.email.disable();
-    this.f.password.disable();
-  }
-
-  enableFormControls() {
-    this.f.email.enable();
-    this.f.password.enable();
   }
 
   ngOnDestroy() {
