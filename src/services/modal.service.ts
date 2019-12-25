@@ -37,7 +37,7 @@ export class ModalService {
   }
 
   removeModal() {
-    if(this.componentRef) {
+    if (this.componentRef) {
       this.appRef.detachView(this.componentRef.hostView);
       this.componentRef.destroy();
     }

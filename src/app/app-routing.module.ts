@@ -7,8 +7,11 @@ import { RegisterComponent } from 'app/components/auth/register/register.compone
 import { PasswordResetComponent } from 'app/components/auth/password-reset/password-reset.component';
 import { DashboardComponent } from 'app/components/dashboard/dashboard.component';
 import { ProfileComponent } from 'app/components/auth/profile/profile.component';
-import { ListUserComponent } from 'app/components/users/list-user/list-user.component';
-import { EditUserComponent } from 'app/components/users/edit-user/edit-user.component';
+import { ListUsersComponent } from 'app/components/users/list-users/list-users.component';
+import { EditUsersComponent } from 'app/components/users/edit-users/edit-users.component';
+import { ListUsergroupsComponent } from './components/usergroups/list-usergroups/list-usergroups.component';
+import { CreateUsergroupsComponent } from './components/usergroups/create-usergroups/create-usergroups.component';
+import { EditUsergroupsComponent } from './components/usergroups/edit-usergroups/edit-usergroups.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [GuestGuard] },
@@ -16,8 +19,11 @@ const routes: Routes = [
   { path: 'password/reset', component: PasswordResetComponent, canActivate: [GuestGuard] },
   { path: 'admin/dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'admin/profile', component: ProfileComponent, canActivate: [AuthGuard] },
-  { path: 'admin/users', component: ListUserComponent, canActivate: [AuthGuard] },
-  { path: 'admin/users/:id', component: EditUserComponent, canActivate: [AuthGuard] },
+  { path: 'admin/users', component: ListUsersComponent, canActivate: [AuthGuard] },
+  { path: 'admin/users/:id', component: EditUsersComponent, canActivate: [AuthGuard] },
+  { path: 'admin/usergroups', component: ListUsergroupsComponent, canActivate: [AuthGuard] },
+  { path: 'admin/usergroups/create', component: CreateUsergroupsComponent, canActivate: [AuthGuard] },
+  { path: 'admin/usergroups/:id', component: EditUsergroupsComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

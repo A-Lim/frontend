@@ -3,11 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthData } from 'models/auth-data.model';
 import { User } from 'models/user.model';
+import { LoginReponse } from 'models/responses/loginresponse.model';
+import { RegistrationResponse } from 'models/responses/registrationresponse.model';
 import { Subject, Observable } from 'rxjs';
 
 import { BaseService } from 'services/base.service';
 import { AlertService } from 'services/alert.service';
 import { API_BASE_URL, API_VERSION } from 'config';
+import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService extends BaseService {
@@ -38,80 +41,71 @@ export class AuthService extends BaseService {
     return this.authStatusListener.asObservable();
   }
 
-  login(email: string, password: string): void {
+  login(email: string, password: string) {
     const authData: AuthData = { email, password };
-    this.http.post<{token: string, expiresIn: number, user: User }>(`${this.url}/login` , authData)
-    .subscribe(response => {
-      this.token = response.token;
-      // if token exists
-      if (this.token && response.expiresIn) {
-        // set timer to log user out after token expires
-        this.setAuthTimer(response.expiresIn);
-        // calculate expiration date time
-        const now = new Date();
-        const expirationDate = new Date(now.getTime() + response.expiresIn * 1000);
+    return this.http.post<LoginReponse>(`${this.url}/login` , authData)
+      .pipe(
+        map(response => {
+          this.token = response.token;
+          // if token exists
+          if (this.token && response.expiresIn) {
+            // set timer to log user out after token expires
+            this.setAuthTimer(response.expiresIn);
+            // calculate expiration date time
+            const now = new Date();
+            const expirationDate = new Date(now.getTime() + response.expiresIn * 1000);
 
-        this.isAuthenticated = true;
-        this.user = response.user;
-        this.authStatusListener.next({ isAuthenticated: this.isAuthenticated, user: this.user });
-        this.saveAuthData(this.token, expirationDate, this.user);
-        this.router.navigate(['admin/dashboard']);
-      }
-    }, error => {
-      console.log(error);
-      this.authStatusListener.next({ isAuthenticated: false, user: null });
-      this.alertError(error);
-    });
+            this.isAuthenticated = true;
+            this.user = response.user;
+            this.authStatusListener.next({ isAuthenticated: this.isAuthenticated, user: this.user });
+            this.saveAuthData(this.token, expirationDate, this.user);
+            this.router.navigate(['admin/dashboard']);
+          }
+          return response;
+        })
+      );
   }
 
-  register(email: string, password: string, confirmPassword: string): void {
+  register(email: string, password: string, confirmPassword: string) {
     const data = { email, password, confirmPassword };
-    this.http.post<{message: string, token: string, expiresIn: number, user: User, logsUserIn: boolean}>(`${this.url}/register` , data)
-      .subscribe(response => {
-        this.alertSuccess(response.message);
+    return this.http.post<RegistrationResponse>(`${this.url}/register` , data)
+      .pipe(
+        map(response => {
+          if (response.logsUserIn && response.token && response.expiresIn) {
+            this.token = response.token;
+            // set timer to log user out after token expires
+            this.setAuthTimer(response.expiresIn);
+            // calculate expiration date time
+            const now = new Date();
+            const expirationDate = new Date(now.getTime() + response.expiresIn * 1000);
+            this.isAuthenticated = true;
+            this.user = response.user;
 
-        if (response.logsUserIn && response.token && response.expiresIn) {
-          this.token = response.token;
-          // set timer to log user out after token expires
-          this.setAuthTimer(response.expiresIn);
-          // calculate expiration date time
-          const now = new Date();
-          const expirationDate = new Date(now.getTime() + response.expiresIn * 1000);
-          this.isAuthenticated = true;
-          this.user = response.user;
-
-          this.authStatusListener.next({ isAuthenticated: this.isAuthenticated, user: this.user });
-          this.saveAuthData(this.token, expirationDate, this.user);
-          this.router.navigate(['admin/dashboard']);
-        }
-      }, error => {
-        this.authStatusListener.next({ isAuthenticated: false, user: null });
-        this.alertError(error);
-      });
+            this.authStatusListener.next({ isAuthenticated: this.isAuthenticated, user: this.user });
+            this.saveAuthData(this.token, expirationDate, this.user);
+            this.router.navigate(['admin/dashboard']);
+            return response;
+          }
+        })
+      );
   }
 
   getProfile() {
-    this.http.get<User>(`${this.url}/profile`)
-      .subscribe(user => {
-        this.authStatusListener.next({ isAuthenticated: this.isAuthenticated, user: this.user });
-      }, error => {
-        this.authStatusListener.next({ isAuthenticated: false, user: null });
-        this.alertError(error);
-      });
+    return this.http.get<User>(`${this.url}/profile`);
   }
 
   updateProfile(data: any) {
-    this.http.patch<{message: string, user: User}>(`${this.url}/profile` , data)
-      .subscribe(response => {
-        this.user = response.user;
-        this.alertSuccess(response.message);
-        // update local storage data
-        localStorage.setItem('user', JSON.stringify(this.user));
-        this.authStatusListener.next({ isAuthenticated: true, user: this.user });
-      }, error => {
-        this.authStatusListener.next({ isAuthenticated: false, user: null });
-        this.alertError(error);
-      });
+    return this.http.patch<{message: string, user: User}>(`${this.url}/profile` , data)
+      .pipe(
+        map(response => {
+          this.alertSuccess(response.message);
+          this.user = response.user;
+          // update local storage data
+          localStorage.setItem('user', JSON.stringify(this.user));
+          this.authStatusListener.next({ isAuthenticated: true, user: this.user });
+          return response;
+        })
+      );
   }
 
   // authenticate user if token is found in localstorage

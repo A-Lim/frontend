@@ -1,28 +1,29 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
-import { User } from 'models/user.model';
+import { User, UserStatus } from 'models/user.model';
 import { App } from 'config';
 import { AuthService } from 'services/auth.service';
 import ValidationUtil from 'helpers/validation.util.js';
+import { BaseFormComponent } from 'app/components/shared/baseform.component';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
-export class ProfileComponent implements OnInit, OnDestroy {
+export class ProfileComponent extends BaseFormComponent implements OnInit, OnDestroy {
   private authStatusSubscription: Subscription;
-  public profileForm: FormGroup;
-  public submitted = false;
-  public isLoading = false;
   public user: User;
+  // to allow usage of enum in html
+  public UserStatus = UserStatus;
 
   constructor(private titleService: Title, private formBuilder: FormBuilder,
               public authService: AuthService) {
-    this.profileForm = this.formBuilder.group({
+    super();
+    this.form = this.formBuilder.group({
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
@@ -35,33 +36,32 @@ export class ProfileComponent implements OnInit, OnDestroy {
         ValidationUtil.requiredIf('oldPassword', 'newPassword')
       ]
     });
+
+    this.authStatusSubscription = this.authService.getAuthStatusListener()
+      .subscribe(_ => { });
   }
 
   ngOnInit() {
     this.titleService.setTitle(`${App.NAME} | Profile`);
-    // this.user = this.authService.getUserData();
-    // disable form fields until data is loaded
-    this.profileForm.disable();
+    this.startLoading();
 
-    this.authService.getProfile();
-    this.authStatusSubscription = this.authService.getAuthStatusListener()
-      .subscribe(data => {
-        this.user = data.user;
-        this.isLoading = false;
-        this.profileForm.enable();
+    this.authService.getProfile()
+      .subscribe(user => {
+        this.user = user;
         this.populateForm();
+        this.endLoading();
+      }, _ => {
+        this.endLoading();
       });
   }
 
-  get f() { return this.profileForm.controls; }
-
   onSubmit() {
-    this.submitted = true;
-    if (this.profileForm.invalid) {
+    super.onSubmit();
+    if (!this.form.valid) {
       return;
     }
 
-    const data = this.profileForm.value;
+    const data = this.form.value;
     if (data.oldPassword === '' || data.oldPassword === null) {
       delete data.oldPassword;
       delete data.newPassword;
@@ -70,13 +70,17 @@ export class ProfileComponent implements OnInit, OnDestroy {
     // set userId
     data.userId = this.user.id;
 
-    this.isLoading = true;
-    this.profileForm.disable();
-    this.authService.updateProfile(data);
+    this.startLoading();
+    this.authService.updateProfile(data)
+      .subscribe(_ => {
+        this.endLoading();
+      }, _ => {
+        this.endLoading();
+      });
   }
 
   populateForm() {
-    this.profileForm.setValue({
+    this.form.setValue({
       firstName: this.user.firstName,
       lastName: this.user.lastName,
       email: this.user.email,

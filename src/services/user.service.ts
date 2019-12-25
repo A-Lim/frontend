@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+import { AlertService } from './alert.service';
 import { BaseService } from 'services/base.service';
-import { AlertService } from 'services/alert.service';
 import { User } from 'models/user.model';
 import { API_BASE_URL, API_VERSION } from 'config';
 import { IGetRowsParams } from 'ag-grid-community';
+import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class UserService extends BaseService {
@@ -27,27 +28,27 @@ export class UserService extends BaseService {
     return this.http.get<User>(`${this.url}/${id}`);
   }
 
-  encodeParams(params) {
-    const qParams: any = {};
-
-    qParams.skip = params.startRow;
-    qParams.limit = params.endRow - params.startRow;
-
-    Object.keys(params.filterModel).forEach(keys => {
-      const filter = params.filterModel[keys];
-      const val = filter.type + ':' + filter.filter;
-      qParams[keys] = val;
-    });
-
-    const sortData = [];
-    params.sortModel.forEach(model => {
-      sortData.push(`${model.sort}:${model.colId}`);
-    });
-
-    if (sortData.length > 0) {
-      qParams.sort = sortData.join(';');
-    }
-
-    return qParams;
+  updateUser(id: string, data: any) {
+    return this.http.patch<{message: string, user: User}>(`${this.url}/${id}` , data)
+      .pipe(
+        map(response => {
+          this.alertSuccess(response.message);
+          return response;
+        })
+      );
   }
+
+  // updateProfile(data: any) {
+  //   return this.http.patch<{message: string, user: User}>(`${this.url}/profile` , data)
+  //     .pipe(
+  //       map(response => {
+  //         this.alertSuccess(response.message);
+  //         this.user = response.user;
+  //         // update local storage data
+  //         localStorage.setItem('user', JSON.stringify(this.user));
+  //         this.authStatusListener.next({ isAuthenticated: true, user: this.user });
+  //         return response;
+  //       })
+  //     );
+  // }
 }

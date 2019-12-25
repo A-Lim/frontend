@@ -10,7 +10,7 @@
       <div class="col-md-3">
         <div class="box box-primary">
             <div class="box-body box-profile">
-              <img class="profile-user-img img-responsive img-circle" src="" alt="User profile picture">
+              <img *ngIf="user" class="profile-user-img img-responsive img-circle" [src]="user.avatar || '/assets/images/default-avatar.png'" alt="User profile picture">
 
               <h3 *ngIf="user" class="profile-username text-center">{{ user.fullName }}</h3>
 
@@ -21,10 +21,10 @@
                   <b>Status</b>
                   <a class="pull-right">
                       <span class="label ml-2"
-                      [class.label-success]="user.status === 'active'"
-                      [class.label-warning]="user.status === 'unverified'"
-                      [class.label-danger]="user.status === 'locked'"
-                      [class.label-danger]="user.status === 'banned'">{{ user.status }}</span>
+                      [class.label-success]="user.status === UserStatus.active"
+                      [class.label-warning]="user.status === UserStatus.unverified"
+                      [class.label-danger]="user.status === UserStatus.locked"
+                      [class.label-danger]="user.status === UserStatus.banned">{{ user.status }}</span>
                   </a>
                 </li>
                   <!-- <li *ngIf="user" class="list-group-item">
@@ -38,7 +38,7 @@
           </div>
       </div>
       <div class="col-md-9">
-          <form method="post" [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+          <form method="post" [formGroup]="form" (ngSubmit)="onSubmit()">
             <div class="box box-primary">
               <div class="box-body">
                   <app-alert></app-alert>
@@ -108,7 +108,7 @@
                   </div>
               </div>
               <div class="box box-footer">
-                <button type="submit" class="btn btn-primary pull-right"><i *ngIf="isLoading" class="fa fa-spinner fa-spin"></i> Update Profile</button>
+                <button type="submit" [disabled]="isLoading" class="btn btn-primary pull-right"><i *ngIf="isLoading" class="fa fa-spinner fa-spin"></i> Update Profile</button>
               </div>
             </div>
           </form>

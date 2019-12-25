@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy, Renderer2 } from '@angular/core';
 import { Title, Meta } from '@angular/platform-browser';
+
 import { App } from 'config';
+import { BaseFormComponent } from 'app/components/shared/baseform.component';
 
 @Component({
   selector: 'app-password-reset',
@@ -16,11 +18,11 @@ export class PasswordResetComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.titleService.setTitle(`${App.NAME} | Forget Password`);
     this.SEOSettings();
   }
 
   SEOSettings() {
-    this.titleService.setTitle(`${App.NAME} | Forget Password`)
     // this.meta.addTag({name: 'keywords', content: 'Angular Project, Create Angular Project'});
     // this.meta.addTag({name: 'description', content: 'Angular project'});
     // this.meta.addTag({name: 'author', content: ''});

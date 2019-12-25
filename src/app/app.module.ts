@@ -18,10 +18,11 @@ import { PasswordResetComponent } from 'app/components/auth/password-reset/passw
 import { ProfileComponent } from 'app/components/auth/profile/profile.component';
 import { DashboardComponent } from 'app/components/dashboard/dashboard.component';
 import { RegisterComponent } from 'app/components/auth/register/register.component';
-import { EditUserComponent } from 'app/components/users/edit-user/edit-user.component';
-import { ListUserComponent } from 'app/components/users/list-user/list-user.component';
+import { EditUsersComponent } from 'app/components/users/edit-users/edit-users.component';
+import { ListUsersComponent } from 'app/components/users/list-users/list-users.component';
 // interceptor
 import { AuthInterceptor } from 'interceptors/auth.interceptor';
+import { HttpErrorInterceptor } from 'interceptors/httperror.interceptor';
 
 // third-party
 import { AgGridModule } from 'ag-grid-angular';
@@ -32,6 +33,10 @@ import { TemplateRendererComponent } from 'helpers/template-renderer.component';
 
 // directives
 import { ICheckDirective } from 'directives/iCheck.directive';
+import { ListUsergroupsComponent } from './components/usergroups/list-usergroups/list-usergroups.component';
+import { CreateUsergroupsComponent } from './components/usergroups/create-usergroups/create-usergroups.component';
+import { EditUsergroupsComponent } from './components/usergroups/edit-usergroups/edit-usergroups.component';
+
 
 
 @NgModule({
@@ -47,14 +52,17 @@ import { ICheckDirective } from 'directives/iCheck.directive';
     AlertComponent,
     RegisterComponent,
     ProfileComponent,
-    EditUserComponent,
-    ListUserComponent,
+    EditUsersComponent,
+    ListUsersComponent,
     // helper
     TemplateRendererComponent,
     // templates
 
     // directives
     ICheckDirective,
+    ListUsergroupsComponent,
+    CreateUsergroupsComponent,
+    EditUsergroupsComponent,
   ],
   imports: [
     BrowserModule,
@@ -69,6 +77,7 @@ import { ICheckDirective } from 'directives/iCheck.directive';
   // multi: true - Dont override existing headers
   providers: [
       { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+      { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],
   entryComponents: [ModalComponent]

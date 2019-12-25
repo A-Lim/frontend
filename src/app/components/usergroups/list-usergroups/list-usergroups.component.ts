@@ -1,21 +1,23 @@
-import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, TemplateRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+
 import { AgGridAngular } from 'ag-grid-angular';
-import { UserService } from 'services/user.service';
-import { IDatasource, IGetRowsParams, GridOptions, GridApi } from 'ag-grid-community';
-// import { ActionCellRendererComponent } from '../../cells/action-cell-renderer/action-cell-renderer.component';
+import { GridOptions, IDatasource, IGetRowsParams } from 'ag-grid-community';
+import { App } from 'config';
+import { BaseComponent } from 'app/components/shared/base.component';
 import { TemplateRendererComponent } from 'helpers/template-renderer.component';
+import { UserGroupService } from 'services/usergroup.service';
+import { AlertService } from 'services/alert.service';
+
 
 @Component({
-  selector: 'app-list-user',
-  templateUrl: './list-user.component.html',
-  styleUrls: ['./list-user.component.scss']
+  selector: 'app-list-usergroups',
+  templateUrl: './list-usergroups.component.html',
+  styleUrls: ['./list-usergroups.component.scss']
 })
-
-export class ListUserComponent implements OnInit {
+export class ListUsergroupsComponent extends BaseComponent implements OnInit {
   @ViewChild('agGrid') agGrid: AgGridAngular;
   @ViewChild('actionsCell') actionsCell: TemplateRef<any>;
-  @ViewChild('statusCell') statusCell: TemplateRef<any>;
 
   public columnDefs: any[];
   public rowData: any;
@@ -36,7 +38,7 @@ export class ListUserComponent implements OnInit {
   public dataSource: IDatasource = {
     getRows: (params: IGetRowsParams) => {
       this.gridOptions.api.showLoadingOverlay();
-      this.userService.getUsers(params).subscribe(data => {
+      this.userGroupService.getUserGroups(params).subscribe(data => {
         this.gridOptions.api.hideOverlay();
         params.successCallback(
           data.doc, data.total
@@ -45,7 +47,11 @@ export class ListUserComponent implements OnInit {
     }
   };
 
-  constructor(private http: HttpClient, private userService: UserService) { }
+  constructor(private titleService: Title, private userGroupService: UserGroupService,
+              alertService: AlertService) {
+    super(alertService);
+    this.titleService.setTitle(`${App.NAME} | User Groups`);
+  }
 
   ngOnInit() {
     this.columnDefs = [
@@ -54,14 +60,14 @@ export class ListUserComponent implements OnInit {
         lockPosition: true,
         valueGetter: 'node.rowIndex + 1',
         cellClass: 'locked-col',
-        width: 30,
+        width: 50,
         suppressNavigable: true,
         sortable: false,
         filter: false
       },
       {
-        headerName: 'First Name',
-        field: 'firstName',
+        headerName: 'Name',
+        field: 'name',
         filter: true,
         suppressMenu: true,
         filterParams: {
@@ -70,8 +76,8 @@ export class ListUserComponent implements OnInit {
         }
       },
       {
-        headerName: 'Last Name',
-        field: 'lastName',
+        headerName: 'Code',
+        field: 'code',
         filter: true,
         suppressMenu: true,
         filterParams: {
@@ -80,26 +86,24 @@ export class ListUserComponent implements OnInit {
         }
       },
       {
-        headerName: 'Email',
-        field: 'email',
-        filter: true,
-        suppressMenu: true,
-        filterParams: {
-          suppressAndOrCondition: true,
-          filterOptions: ['contains', 'equals']
-        }
-      },
-      {
-        headerName: 'Status',
-        field: 'status',
-        sortable: true,
-        filter: true,
-        suppressMenu: true,
-        floatingFilterComponentParams: { suppressFilterButton: true },
+        headerName: 'Users Count',
+        field: 'users',
+        sortable: false,
+        filter: false,
         width: 80,
-        cellRendererFramework: TemplateRendererComponent,
-        cellRendererParams: {
-          ngTemplate: this.statusCell
+        valueGetter(params) {
+          // checks if null, cause cell might be rendered before data has loaded
+          return params.data ? params.data.users.length : 0;
+        }
+      },
+      {
+        headerName: 'Permissions Count',
+        field: 'permissions',
+        sortable: false,
+        filter: false,
+        width: 100,
+        valueGetter(params) {
+          return params.data ? params.data.permissions.length : 0;
         }
       },
       {

@@ -3,7 +3,7 @@
   <div class="login-box-body">
     <p class="text-center">Register</p>
     <app-alert></app-alert>
-    <form method="post" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <form method="post" [formGroup]="form" (ngSubmit)="onSubmit()">
       <div class="row">
         <div class="col-md-12">
           <div class="form-group has-feedback" [ngClass]="{ 'has-error': submitted && f['email'].errors }">

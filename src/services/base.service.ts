@@ -1,19 +1,34 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { AlertService } from 'services/alert.service';
+import { AlertService } from './alert.service';
 
 export abstract class BaseService {
 
   constructor(private alertService: AlertService) { }
 
-  alertError(error: any) {
-    if (error instanceof HttpErrorResponse) {
-      this.alertService.error('Oops, unable to process request currently');
-    } else {
-      this.alertService.error(error.error.message);
-    }
+  alertSuccess(message: string, keepAfterNavigationChange = false) {
+    this.alertService.success(message, keepAfterNavigationChange);
   }
 
-  alertSuccess(message: any) {
-    this.alertService.success(message);
+  encodeParams(params) {
+    const qParams: any = {};
+
+    qParams.skip = params.startRow;
+    qParams.limit = params.endRow - params.startRow;
+
+    Object.keys(params.filterModel).forEach(keys => {
+      const filter = params.filterModel[keys];
+      const val = filter.type + ':' + filter.filter;
+      qParams[keys] = val;
+    });
+
+    const sortData = [];
+    params.sortModel.forEach(model => {
+      sortData.push(`${model.sort}:${model.colId}`);
+    });
+
+    if (sortData.length > 0) {
+      qParams.sort = sortData.join(';');
+    }
+
+    return qParams;
   }
 }

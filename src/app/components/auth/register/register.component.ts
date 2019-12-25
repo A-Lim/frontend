@@ -1,36 +1,29 @@
 import { Component, OnInit, OnDestroy, Renderer2 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Title, Meta } from '@angular/platform-browser';
-import { Subscription } from 'rxjs';
+// import { Subscription } from 'rxjs';
 
 import { AuthService } from 'services/auth.service';
 import { App } from 'config';
 import ValidationUtil from 'helpers/validation.util.js';
+import { BaseFormComponent } from 'app/components/shared/baseform.component';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
-export class RegisterComponent implements OnInit, OnDestroy {
-  private authStatusSubscription: Subscription;
-  public registerForm: FormGroup;
-  public submitted = false;
-  public errors: string[];
-  public isLoading = false;
-
-  // convenience getter for easy access to form fields
-  get f() { return this.registerForm.controls; }
+export class RegisterComponent extends BaseFormComponent implements OnInit, OnDestroy {
 
   constructor(private renderer: Renderer2, private titleService: Title, private meta: Meta,
               private formBuilder: FormBuilder, public authService: AuthService) {
-
+    super();
     this.renderer.removeClass(document.body, 'skin-purple');
     this.renderer.removeClass(document.body, 'sidebar-mini');
     this.renderer.addClass(document.body, 'login-page');
 
     // initialize form with validations
-    this.registerForm = this.formBuilder.group({
+    this.form = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', []]
@@ -41,31 +34,26 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.titleService.setTitle(`${App.NAME} | Register`);
-    this.authStatusSubscription = this.authService.getAuthStatusListener()
-      .subscribe(_ => {
-        this.isLoading = false;
-        this.registerForm.enable();
-      });
   }
 
   onSubmit() {
-    this.submitted = true;
-    if (this.registerForm.invalid) {
-      return;
-    }
+    super.onSubmit();
 
-    const email = this.registerForm.value.email;
-    const password = this.registerForm.value.password;
-    const cpassword = this.registerForm.value.confirmPassword;
+    const email = this.form.value.email;
+    const password = this.form.value.password;
+    const cpassword = this.form.value.confirmPassword;
 
-    this.isLoading = true;
-    this.registerForm.disable();
-    this.authService.register(email, password, cpassword);
+    this.startLoading();
+    this.authService.register(email, password, cpassword)
+      .subscribe(_ => {
+        this.endLoading();
+      }, _ => {
+        this.endLoading();
+      });
   }
 
   ngOnDestroy() {
     this.renderer.addClass(document.body, 'skin-purple');
     this.renderer.addClass(document.body, 'sidebar-mini');
-    this.authStatusSubscription.unsubscribe();
   }
 }

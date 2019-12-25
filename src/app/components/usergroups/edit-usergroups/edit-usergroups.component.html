@@ -1,0 +1,47 @@
+<div class="content-wrapper">
+    <section class="content-header">
+      <h1>Create User Groups</h1>
+      <ol class="breadcrumb">
+        <li><a [routerLink]="['/admin/usergroups']"><i class="fa fa-users"></i> User Groups</a></li>
+        <li class="active"> Create</li>
+      </ol>
+    </section>
+    <section class="content">
+      <div class="row">
+        <div class="col-md-12">
+            <form method="post" [formGroup]="form" (ngSubmit)="onSubmit()">
+              <div class="box box-primary">
+                <div class="box-body">
+                  <app-alert></app-alert>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group has-feedback" [ngClass]="{ 'has-error': submitted && f['name'].errors }">
+                        <label>Group Name</label>
+                        <input type="text" class="form-control" placeholder="Group Name" formControlName="name" />
+                        <div *ngIf="submitted && f['name'].errors">
+                          <span *ngIf="f['name'].errors.required" class="text-danger" role="alert">Group name is required.</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group has-feedback" [ngClass]="{ 'has-error': submitted && f['code'].errors }">
+                        <label>Code</label>
+                        <input type="text" class="form-control" placeholder="Code" formControlName="code"/>
+                        <div *ngIf="submitted && f['code'].errors">
+                          <span *ngIf="f['code'].errors.required" class="text-danger" role="alert">Code is required.</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="box box-footer">
+                  <button type="submit" class="btn btn-primary pull-right"><i *ngIf="isLoading" class="fa fa-spinner fa-spin"></i> Create</button>
+                </div>
+              </div>
+            </form>
+        </div>
+      </div>
+    </section>
+  </div>
